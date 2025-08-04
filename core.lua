@@ -176,15 +176,24 @@ function suit:keyPressedOn(id, key)
 end
 
 -- state update
-function suit:enterFrame()
+function suit:enterFrame(mouseX, mouseY)
 	if not self.mouse_button_down then
 		self.active = nil
 	elseif self.active == nil then
 		self.active = NONE
 	end
+	local mx = mouseX
+	local my = mouseY
+
+	if mx == nil then
+		mx = love.mouse.getX()
+	end
+	if my == nil then
+		my = love.mouse.getY()
+	end
 
 	self.hovered_last, self.hovered = self.hovered, nil
-	self:updateMouse(love.mouse.getX(), love.mouse.getY(), love.mouse.isDown(1))
+	self:updateMouse(mx, my, love.mouse.isDown(1))
 	self.key_down, self.textchar = nil, ""
 	self:grabKeyboardFocus(NONE)
 	self.hit = nil
