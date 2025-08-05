@@ -18,7 +18,7 @@ function theme.getColorForState(opt)
 	return (opt.color and opt.color[opt.state]) or theme.color[s]
 end
 
-function theme.drawBox(x,y,w,h, colors, cornerRadius)
+function theme.drawBox(x,y,w,h, colors, cornerRadius, outline)
 	colors = colors or theme.getColorForState(opt)
 	cornerRadius = cornerRadius or theme.cornerRadius
 	w = math.max(cornerRadius/2, w)
@@ -28,6 +28,11 @@ function theme.drawBox(x,y,w,h, colors, cornerRadius)
 
 	love.graphics.setColor(colors.bg)
 	love.graphics.rectangle('fill', x,y, w,h, cornerRadius)
+	if outline ~= nil then
+		love.graphics.setColor(colors.fg)
+		love.graphics.setLineWidth(outline)
+		love.graphics.rectangle('line', x,y, w,h, cornerRadius)
+	end
 end
 
 function theme.getVerticalOffsetForAlign(valign, font, h)
@@ -52,12 +57,32 @@ end
 function theme.Button(text, opt, x,y,w,h)
 	local c = theme.getColorForState(opt)
 
-	theme.drawBox(x,y,w,h, c, opt.cornerRadius)
+	theme.drawBox(x,y,w,h, c, opt.cornerRadius, opt.outline)
 	love.graphics.setColor(c.fg)
 	love.graphics.setFont(opt.font)
 
+	-- ensure text remains aligned regardless of scale
+	local scale = opt.scale or 1.0
+	local align = opt.align or "center"
+	local textX = x
+	local textY = y
+	local textW = w
+	if scale ~= 1.0 then
+		-- For center alignment, shift x so the scaled text stays centered
+		if align == "center" then
+			textX = x + (w - w * scale) / 2
+		elseif align == "right" then
+			textX = x + (w - w * scale)
+		end
+	end
+
 	y = y + theme.getVerticalOffsetForAlign(opt.valign, opt.font, h)
-	love.graphics.printf(text, x+2, y, w-4, opt.align or "center")
+	love.graphics.printf(text, textX+2, textY, textW-4,
+		align,
+		0,
+		scale,
+		scale
+	)
 end
 
 function theme.Checkbox(chk, opt, x,y,w,h)
