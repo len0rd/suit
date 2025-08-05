@@ -15,6 +15,7 @@ function Layout:reset(x,y, padx,pady)
 	self._widths = {}
 	self._heights = {}
 	self._isFirstCell = true
+	self._start_x = self._x
 
 	return self
 end
@@ -33,6 +34,12 @@ end
 
 function Layout:nextRow()
 	return self._x, self._y + self._h + self._pady
+end
+
+function Layout:newRow()
+	self._x = self._start_x
+	self._y = self._y + self._h + self._pady
+	self._w = nil
 end
 
 Layout.nextDown = Layout.nextRow
