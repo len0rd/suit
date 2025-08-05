@@ -213,14 +213,14 @@ function suit:registerDraw(f, ...)
 end
 
 function suit:draw()
-	self:exitFrame()
+	-- self:exitFrame() -- CALL these manually in your update method
 	love.graphics.push('all')
 	for i = self.draw_queue.n,1,-1 do
 		self.draw_queue[i]()
 	end
 	love.graphics.pop()
 	self.draw_queue.n = 0
-	self:enterFrame()
+	-- self:enterFrame() -- CALL these manually in your update method
 end
 
 return suit
