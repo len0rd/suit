@@ -18,12 +18,23 @@ function theme.getColorForState(opt)
 	return (opt.color and opt.color[opt.state]) or theme.color[s]
 end
 
-function theme.drawBox(x,y,w,h, colors, cornerRadius, outline)
+function theme.drawBox(x,y,w,h, colors, cornerRadius, outline, scale)
 	colors = colors or theme.getColorForState(opt)
-	cornerRadius = cornerRadius or theme.cornerRadius
+	cornerRadius = (cornerRadius or theme.cornerRadius)
 	w = math.max(cornerRadius/2, w)
 	if h < cornerRadius/2 then
 		y,h = y - (cornerRadius - h), cornerRadius/2
+	end
+
+	-- by default, scale will operate about the center of the box. meaning it grows
+	-- out/in in all directions
+	if scale and scale ~= 1.0 then
+		local baseW, baseH = w, h
+		w = w * scale
+		h = h * scale
+		x = x - (w - baseW) / 2
+		y = y - (h - baseH) / 2
+		cornerRadius = cornerRadius * scale
 	end
 
 	love.graphics.setColor(colors.bg)
@@ -56,13 +67,13 @@ end
 
 function theme.Button(text, opt, x,y,w,h)
 	local c = theme.getColorForState(opt)
+	local scale = opt.scale or 1.0
 
-	theme.drawBox(x,y,w,h, c, opt.cornerRadius, opt.outline)
+	theme.drawBox(x,y,w,h, c, opt.cornerRadius, opt.outline, scale)
 	love.graphics.setColor(c.fg)
 	love.graphics.setFont(opt.font)
 
 	-- ensure text remains aligned regardless of scale
-	local scale = opt.scale or 1.0
 	local align = opt.align or "center"
 	local textX = x
 	local textY = y
