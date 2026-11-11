@@ -155,11 +155,12 @@ end
 
 function suit:grabKeyboardFocus(id)
 	if self:isActive(id) then
-		if love.system.getOS() == "Android" or love.system.getOS() == "iOS" then
-			if id == NONE then
-				love.keyboard.setTextInput( false )
-			else
+		-- only show/hide the on-screen keyboard when focus moves to or from a suit widget
+		if (love.system.getOS() == "Android" or love.system.getOS() == "iOS") and id ~= self.keyboardFocus then
+			if id ~= NONE then
 				love.keyboard.setTextInput( true )
+			elseif self.keyboardFocus ~= nil and self.keyboardFocus ~= NONE then
+				love.keyboard.setTextInput( false )
 			end
 		end
 		self.keyboardFocus = id
